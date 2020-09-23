@@ -114,7 +114,7 @@ netbox_token = setup['global']['token']
 headers = {'Authorization': 'Token '+ netbox_token, 'Accept': 'application/json', 'Content-Type': 'application/json'}
 
 # Location
-site_slug = 'oavt'
+site_slug = setup['global']['site']
 
 # Vendor
 vendor_slugs = [ 'hp', '3com' ]

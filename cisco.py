@@ -154,7 +154,7 @@ netbox_token = setup['global']['token']
 headers = {'Authorization': 'Token '+ netbox_token, 'Accept': 'application/json', 'Content-Type': 'application/json'}
 
 # Location
-site_slug = 'po'
+site_slug = setup['global']['site']
 
 # Get fqdn of Netbox
 domain_name = setup['global']['domain']
