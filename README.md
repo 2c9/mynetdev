@@ -2,7 +2,7 @@
 
 settings.yaml
 
-  global:
-    token: NetboxToken
-    username: DeviceUserName
-    password: DeviceUserPassword
+	global:
+		token: NetboxToken
+		username: DeviceUserName
+		password: DeviceUserPassword
