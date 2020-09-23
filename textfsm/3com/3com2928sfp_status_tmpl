@@ -1,0 +1,9 @@
+Value INTERFACE (GE1/0/\d+)
+Value LINK (ADM|DOWN|UP|Stby)
+Value SPEED (auto|\d+\S+)
+Value DUPLEX ([FHA](\S+)*)
+Value TYPE ([ATH](\S)*)
+Value PVID (\d+)
+
+Start
+  ^${INTERFACE} +${LINK} +${SPEED} +${DUPLEX} +${TYPE} +${PVID} -> Record

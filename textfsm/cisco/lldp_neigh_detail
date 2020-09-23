@@ -1,0 +1,8 @@
+Value Required DEST_HOST (\S+)
+Value LOCAL_PORT (.*)
+Value REMOTE_PORT (.*)
+
+Start
+  ^Local Intf: ${LOCAL_PORT}
+  ^Port id: ${REMOTE_PORT}
+  ^System Name: ${DEST_HOST} -> Record

@@ -1,0 +1,9 @@
+Value Required DEST_HOST (\S+)
+Value MGMNT_IP (.*)
+Value LOCAL_PORT (.*)
+Value REMOTE_PORT (.*)
+
+Start
+  ^Device ID: ${DEST_HOST}
+  ^.*IP address: ${MGMNT_IP}
+  ^Interface: ${LOCAL_PORT},  Port ID \(outgoing port\): ${REMOTE_PORT} -> Record

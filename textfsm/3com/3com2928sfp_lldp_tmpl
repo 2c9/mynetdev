@@ -1,0 +1,14 @@
+Value LOCAL_PORT (.*)
+Value CHASSIS_TYPE (MAC address|Network address)
+Value CHASSIS_ID (\S+)
+Value REMOTE_PORT_TYPE (MAC address|Network address|Interface name)
+Value REMOTE_PORT (\S+)
+Value SYSTEM_NAME (.+)
+
+Start
+  ^LLDP neighbor-information of port \d+\[${LOCAL_PORT}\]
+  ^ *Chassis type *: ${CHASSIS_TYPE}
+  ^ *Chassis ID *: ${CHASSIS_ID}
+  ^ *Port ID type *: ${REMOTE_PORT_TYPE}
+  ^ *Port ID *: ${REMOTE_PORT}
+  ^ *System name *: ${SYSTEM_NAME} -> Record

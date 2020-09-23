@@ -1,0 +1,10 @@
+Value INTERFACE (\S+)
+Value MAC (.+?)
+Value TYPE (.*)
+Value IP (.+)
+
+Start
+  ^${INTERFACE} is [administratively down|down|up].*
+  ^  Hardware is ${TYPE}, address is ${MAC} .*
+  ^  Internet address is ${IP}
+  ^  Queueing strategy -> Record

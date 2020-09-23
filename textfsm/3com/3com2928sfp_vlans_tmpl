@@ -1,0 +1,22 @@
+Value VLAN_ID (\d+)
+Value VLAN_NAME (.*)
+Value List TAGGED (GigabitEthernet\S+)
+Value List UNTAGGED (GigabitEthernet\S+)
+
+# Empty lines must be replaced with '#####'
+Start
+  ^ *VLAN ID: ${VLAN_ID}
+  ^ *Description: ${VLAN_NAME}
+  ^ *Tagged +Ports: -> Tagged
+
+Tagged
+  ^ *${TAGGED} -> Continue
+  ^ *\S+ +${TAGGED} -> Continue
+  ^ *\S+ +\S+ *${TAGGED} -> Continue
+  ^ *Untagged +Ports: -> Untagged
+
+Untagged
+  ^ *${UNTAGGED} -> Continue
+  ^ *\S+ +${UNTAGGED} -> Continue
+  ^ *\S+ +\S+ *${UNTAGGED} -> Continue
+  ^##### -> Record Start
