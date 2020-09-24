@@ -18,6 +18,7 @@ class Switch3Com:
     def __init__(self, swname, ipaddr, username, password, cmdmode='512900'):
         self.avail = 1
         self.result = {}
+        self.devpasswd = cmdmode
         self.cmdprompt='<'+swname+'>'
         try:
             ip = str(ipaddress.ip_address(ipaddr))
@@ -50,8 +51,9 @@ class Switch3Com:
         time.sleep(0.5)
         self.ssh.send('Y\n')
         time.sleep(0.5)
-        self.ssh.send('Jinhua1920unauthorized\n')
+        #self.ssh.send('Jinhua1920unauthorized\n')
         #self.ssh.send('512900\n')
+        self.ssh.send(devpasswd+'\n')
         time.sleep(0.5)
         result = self.read()
         if result.find('Error: Invalid password.') > 0:
@@ -107,7 +109,6 @@ def toMac(mac, fmt='dot'):
 
 with open('settings.yaml') as f:
     setup = yaml.safe_load(f)
-    #print(setup)
 
 # Netbox Authorizantion headers
 netbox_token = setup['global']['token']
@@ -158,7 +159,11 @@ for dev in devices['results']:
     r = requests.get('https://'+domain_name+'/api/dcim/interfaces/?limit=0&device_id='+str(dev['id']), headers=headers)
     interfaces = json.loads(r.text)['results']
     # Get data from the switch
-    tst = Switch3Com(dev['name'], ip, user, password)
+    model = dev['device_type']['slug']
+    for item in setup['HP']:
+        if model in item['models']:
+            devpasswd=item['password']
+    tst = Switch3Com(dev['name'], ip, user, password, cmdmode=devpasswd)
     if tst.avail == 0:
         print('Device is unavailable')
         continue
