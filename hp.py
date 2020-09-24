@@ -219,16 +219,18 @@ for dev in devices['results']:
         r = requests.patch('https://'+domain_name+'/api/dcim/interfaces/'+str(interface['id'])+'/',data=raw_data, headers=headers)
         descr = ''
         # Macs
-        if interface['description'] == '' or True:
+        if not interface['description'].startswith('Fix: '):
             if int_name in int_macs.keys() and len(int_macs[int_name]) == 1:
                 mac_addr = int_macs[int_name][0]
                 r = requests.get(webdis+'/GET/'+mac_addr)
                 if r.status_code == 200:
                     clientname = json.loads(r.text)['GET']
                     if clientname:
-                        #clientname = clientname.encode('ascii', 'replace')
                         descr = 'MAC/DHCP: '+mac_addr+' -> '+clientname
-                        print(descr)
+                    else:
+                        descr = interface['description']
+                else:
+                    descr = interface['description']
         else:
             descr = interface['description']
         # Set interface's description based on LLDP neighbors infromation
@@ -240,5 +242,7 @@ for dev in devices['results']:
                 rem_id = neighbors[interface['name']]['REMOTE_PORT']
             descr  = 'LLDP: '+sysname+' '+rem_id
         raw_data = '{ "description": "'+descr+'" }'
+        if descr != '':
+            print(int_name+' - '+descr)
         r = requests.patch('https://'+domain_name+'/api/dcim/interfaces/'+str(interface['id'])+'/',data=raw_data.encode('utf-8'), headers=headers)
 print('The end\n')
