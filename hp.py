@@ -1,6 +1,6 @@
 #!/bin/python3
 
-import xml.etree.ElementTree as ET
+import redis
 import re
 import yaml
 import requests
@@ -15,7 +15,7 @@ from tabulate import tabulate
 import pprint
 
 class Switch3Com:
-    def __init__(self, swname, ipaddr, username, password):
+    def __init__(self, swname, ipaddr, username, password, cmdmode='512900'):
         self.avail = 1
         self.result = {}
         self.cmdprompt='<'+swname+'>'
@@ -50,8 +50,8 @@ class Switch3Com:
         time.sleep(0.5)
         self.ssh.send('Y\n')
         time.sleep(0.5)
-        #self.ssh.send('Jinhua1920unauthorized\n')
-        self.ssh.send('512900\n')
+        self.ssh.send('Jinhua1920unauthorized\n')
+        #self.ssh.send('512900\n')
         time.sleep(0.5)
         result = self.read()
         if result.find('Error: Invalid password.') > 0:
@@ -126,23 +126,8 @@ domain_name = setup['global']['domain']
 user=setup['global']['username']
 password=setup['global']['password']
 
-# Get data from dhcp server
-dhcp_data = {}
-
-xml_root = ET.parse('/mnt/c/linux/dhcp_'+site_slug+'.xml').getroot()
-for scopes in xml_root.findall('./IPv4/Scopes/Scope'):
-    for reserv in scopes.findall('./Reservations/Reservation'):
-        mac_addr = toMac(reserv.find('ClientId').text)
-        if mac_addr not in dhcp_data.keys():
-            dhcp_data[mac_addr] = reserv.find('Name').text
-    for lease in scopes.findall('./Leases/Lease'):
-        mac_addr = toMac(lease.find('ClientId').text)
-        if mac_addr not in dhcp_data.keys():
-            cli_hostname = lease.find('HostName')
-            if cli_hostname is not None:
-                dhcp_data[mac_addr] = cli_hostname.text
-            else:
-                dhcp_data[mac_addr] = lease.find('IPAddress').text
+# Test web redis
+webdis = 'http://172.16.3.174:7379'
 
 # Get Sites info from Netbox
 r = requests.get('https://'+domain_name+'/api/dcim/sites/', headers=headers)
@@ -229,12 +214,16 @@ for dev in devices['results']:
         r = requests.patch('https://'+domain_name+'/api/dcim/interfaces/'+str(interface['id'])+'/',data=raw_data, headers=headers)
         descr = ''
         # Macs
-        if interface['description'] == '':
+        if interface['description'] == '' or True:
             if int_name in int_macs.keys() and len(int_macs[int_name]) == 1:
                 mac_addr = int_macs[int_name][0]
-                if mac_addr in dhcp_data.keys():
-                    descr = 'MAC/DHCP: '+mac_addr+' -> '+dhcp_data[mac_addr]
-                    print(descr)
+                r = requests.get(webdis+'/GET/'+mac_addr)
+                if r.status_code == 200:
+                    clientname = json.loads(r.text)['GET']
+                    if clientname:
+                        #clientname = clientname.encode('ascii', 'replace')
+                        descr = 'MAC/DHCP: '+mac_addr+' -> '+clientname
+                        print(descr)
         else:
             descr = interface['description']
         # Set interface's description based on LLDP neighbors infromation
@@ -245,5 +234,6 @@ for dev in devices['results']:
             else:
                 rem_id = neighbors[interface['name']]['REMOTE_PORT']
             descr  = 'LLDP: '+sysname+' '+rem_id
-        r = requests.patch('https://'+domain_name+'/api/dcim/interfaces/'+str(interface['id'])+'/',data='{ "description": "'+descr+'" }', headers=headers)
+        raw_data = '{ "description": "'+descr+'" }'
+        r = requests.patch('https://'+domain_name+'/api/dcim/interfaces/'+str(interface['id'])+'/',data=raw_data.encode('utf-8'), headers=headers)
 print('The end\n')
