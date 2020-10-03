@@ -1,4 +1,4 @@
-$leases = Get-DhcpServerv4Scope | Get-DhcpServerv4Lease -AllLeases | Where-Object { $_.hostname -ne $null -AND $_.hostname -ne 'BAD_ADDRESS' }
+$leases = Get-DhcpServerv4Scope | Get-DhcpServerv4Lease | Where-Object { $_.hostname -ne $null -AND $_.hostname -ne 'BAD_ADDRESS' }
 
 $url = 'http://172.16.3.174:7379'
 

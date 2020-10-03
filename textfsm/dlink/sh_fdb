@@ -1,0 +1,7 @@
+Value VID (\d+)
+Value VNAME (\S+)
+Value MAC (\S+)
+Value PORT (\d)
+
+Start
+  ^${VID} +${VNAME} +${MAC} +${PORT} .* -> Record

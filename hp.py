@@ -229,10 +229,6 @@ for dev in devices['results']:
                         descr = 'MAC/DHCP: '+mac_addr+' -> '+clientname
                     else:
                         descr = interface['description']
-                else:
-                    descr = interface['description']
-        else:
-            descr = interface['description']
         # Set interface's description based on LLDP neighbors infromation
         if interface['name'] in neighbors:
             sysname = neighbors[interface['name']]['SYSTEM_NAME']
@@ -241,8 +237,9 @@ for dev in devices['results']:
             else:
                 rem_id = neighbors[interface['name']]['REMOTE_PORT']
             descr  = 'LLDP: '+sysname+' '+rem_id
+        if descr == '':
+            descr = interface['description']
+        print(int_name+' - '+descr)
         raw_data = '{ "description": "'+descr+'" }'
-        if descr != '':
-            print(int_name+' - '+descr)
         r = requests.patch('https://'+domain_name+'/api/dcim/interfaces/'+str(interface['id'])+'/',data=raw_data.encode('utf-8'), headers=headers)
 print('The end\n')
