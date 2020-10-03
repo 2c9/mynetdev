@@ -1,0 +1,9 @@
+Value VLAN_ID (\d+)
+Value VLAN_NAME (\S+)
+Value TAGGED (.*)
+Value UNTAGGED (.*)
+
+Start
+  ^VID *: ${VLAN_ID} *VLAN NAME *: *${VLAN_NAME}
+  ^Tagged Ports *: ${TAGGED}
+  ^Untagged Ports *: ${UNTAGGED} -> Record

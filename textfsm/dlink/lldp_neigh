@@ -1,0 +1,10 @@
+Value LPORT (\d+)
+Value RPORT (.+)
+Value NAME (\S+)
+
+Start
+  ^Port ID *: *${LPORT}
+  ^Remote Entities Count : 0 -> Next.Clearall
+  ^ +Port ID *: *${RPORT}
+  ^ +System Name *: *${NAME}
+  ^ +Port PVID.* -> Record

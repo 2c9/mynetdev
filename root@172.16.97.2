@@ -1,0 +1,31 @@
+import requests
+import yaml
+import json
+import re
+
+headers = {'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded'}
+
+with open('settings.yaml') as f:
+    setup = yaml.safe_load(f)
+
+# Netbox Authorizantion headers
+netbox_token = setup['global']['token']
+
+# Device Credentials
+user=setup['global']['username']
+password=setup['global']['password']
+
+login_data = { 'username': user, 'password': password }
+
+s = requests.Session()
+
+r = s.get('http://172.28.77.2')
+r = s.post('http://172.28.77.2/htdocs/login/login.lua', data=login_data)
+print(s.cookies)
+rr = s.get('http://172.28.77.2/htdocs/pages/switching/lldp_remote.lsp')
+print(rr.text)
+print(s.cookies)
+values = re.findall(r'var aDataSet = \[\s*(.*?)\];', rr.text, re.DOTALL | re.MULTILINE)
+print(values)
+for value in values:
+    print(value)
