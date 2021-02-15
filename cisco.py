@@ -224,8 +224,8 @@ for dev in devices['results']:
             raw_int_data += '"type": "virtual", "enabled": "true", '
             raw_int_data += '"mac_address": "'+switch.interfaces[interface]['mac_address']+'" }'
             # Add new interface to Netbox
-            r = requests.post('https://'+domain_name+'/api/dcim/interfaces/', data=raw_int_data, headers=headers)
-            new_int = json.loads(r.text) # Save the interface data
+            #r = requests.post('https://'+domain_name+'/api/dcim/interfaces/', data=raw_int_data, headers=headers)
+            #new_int = json.loads(r.text) # Save the interface data
         else:
             print('An unknown interface is founded... It\'s name is '+interface)
     #
@@ -272,7 +272,7 @@ for dev in devices['results']:
                 # Otherwise let's write a message to stdout
                 if len(result['results']) == 1:
                     nb_dev_id = result['results'][0]
-                    nb_dev_id = nb_dev_id['interface']['device']['id']
+                    nb_dev_id = nb_dev_id['assigned_object']['device']['id']
                     if nb_dev_id == dev['id']:
                         #print('Is already assigned to the device')
                         pass
