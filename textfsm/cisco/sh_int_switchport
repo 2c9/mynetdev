@@ -1,0 +1,10 @@
+Value INTERFACE (\S+)
+Value MODE (access|trunk|dynamic)
+Value UNTAGGED_VLAN (\d+)
+Value NATIVE (\d+)
+
+Start
+  ^Name:\s+${INTERFACE}
+  ^Administrative Mode:.+${MODE}.*
+  ^Access Mode VLAN:\s+${UNTAGGED_VLAN}.*
+  ^Trunking Native Mode VLAN:\s+${NATIVE}.* -> Record

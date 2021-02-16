@@ -1,0 +1,6 @@
+Value Required NEIGHBOR (.{0,20}(?<! ))
+Value Required LOCAL_INTERFACE (\S+)
+Value Required NEIGHBOR_INTERFACE (\S+)
+
+Start
+  ^${NEIGHBOR}\s*${LOCAL_INTERFACE}\s+\d+\s+\S*\s+${NEIGHBOR_INTERFACE} -> Record

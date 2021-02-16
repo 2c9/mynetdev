@@ -1,0 +1,4 @@
+textfsm
+ipaddress
+paramiko
+pynetbox
