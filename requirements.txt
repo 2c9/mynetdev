@@ -2,3 +2,4 @@ textfsm
 ipaddress
 paramiko
 pynetbox
+schema
