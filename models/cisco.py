@@ -49,6 +49,7 @@ class Cisco(Switch):
             return { key: value for (key, value) in result}
 
     def getNeighbors(self):
+        schema_neighs = Schema({ str: list })
         self.ssh.send('sh lldp neigh\n')
         result = self.ssh_read()
         neighs = {}
@@ -61,6 +62,7 @@ class Cisco(Switch):
                     neighs[intname] = [ [ item[0], item[2]] ]
                 else:
                     neighs[intname].append([ item[0],item[2] ])
+            schema_neighs.validate(neighs)
             return neighs
 
     def getInterfaces( self, netbox_vlans ):

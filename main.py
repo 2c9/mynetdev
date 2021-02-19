@@ -48,6 +48,7 @@ if __name__ == "__main__":
         sw = Cisco(device.name, dev_ip, user, password)
 
         sw_vlans = sw.getVlans()
+        
         update_flag = True if device.name == '3T-MAIN' else False
         diff_vlans(netbox_vlans, sw_vlans, update=update_flag)
         netbox_vlans = { str(item.vid) : item for item in netbox.ipam.vlans.filter(site=site_slug) }
@@ -75,6 +76,7 @@ if __name__ == "__main__":
                         print( " [+] IP address " + ipaddr + " was added to Netbox")
         
         neighbors = sw.getNeighbors()
+
         for interface_name, sw_int in device_interfaces.items():
             if interface_name in neighbors.keys():
                 descr = ', '.join( "Neigh: "+item[0]+"("+item[1]+")" for item in neighbors[interface_name])
